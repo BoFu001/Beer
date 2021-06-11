@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="initial_slider_values">
+        <item>@integer/minimum</item>
+        <item>@integer/maximum</item>
+    </array>
+
+    <integer name="minimum">2000</integer>
+    <integer name="maximum">2030</integer>
+
+</resources>

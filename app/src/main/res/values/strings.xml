@@ -1,0 +1,20 @@
+<resources>
+
+    <!-- MainActivity -->
+    <string name="app_name">Beer</string>
+
+    <!-- FilterActivity -->
+    <string name="filter_page_name">Filter</string>
+    <string name="filter_page_text">From %s to %s</string>
+    <string name="filter_btn">Filter</string>
+    <string name="clean_btn">Clean</string>
+
+    <!-- No result View -->
+    <string name="please_try_again">Please try again</string>
+    <string name="no_items_found">No beer found</string>
+
+    <!-- No connection View -->
+    <string name="oops">Oops!</string>
+    <string name="retry">Retry</string>
+    <string name="not_connected_hint">Sorry, there is no internet connection at the moment.</string>
+</resources>
