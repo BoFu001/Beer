@@ -25,17 +25,17 @@ class MainActivity : AppCompatActivity() {
         if(it.resultCode == Activity.RESULT_OK){
             val jsonYearFilter = it.data?.getStringExtra("jsonFilterData")
             val yearFilter = Gson().fromJson(jsonYearFilter, YearFilter::class.java)
-            mainViewModel.filterData(yearFilter)
+            mainViewModel.setFilter(yearFilter)
         }
+    }
+
+    private val binding: ActivityMainBinding by lazy {
+        ActivityMainBinding.inflate(layoutInflater)
     }
 
     private val TAG = javaClass.simpleName
     private val mainViewModel: MainViewModel by viewModels()
     private val mainAdapter = MainAdapter(ArrayList(), this::selectBeer)
-
-    private val binding: ActivityMainBinding by lazy {
-        ActivityMainBinding.inflate(layoutInflater)
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,6 +43,7 @@ class MainActivity : AppCompatActivity() {
 
         mainRecyclerViewSetup()
         mainViewModelSetup()
+        retryBtnSetup()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -74,6 +75,9 @@ class MainActivity : AppCompatActivity() {
     private fun mainViewModelSetup(){
         println("zzz 1")
 
+        mainViewModel.hasConnection.observe(this) {
+            showNoConnectionView(it)
+        }
         mainViewModel.liveData.observe(this) {
             println("zzz 2:" + it.size)
             mainAdapter.update(it)
@@ -81,6 +85,7 @@ class MainActivity : AppCompatActivity() {
         }
         mainViewModel.isLoading.observe(this) {
             showProgressBar(it)
+            println("kkk " + it)
         }
     }
 
@@ -91,15 +96,30 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun showNoConnectionView(bool:Boolean){
+        when(bool){
+            true -> binding.mainNoConnectionView.noConnectionViewLayout.visibility = View.GONE
+            false -> binding.mainNoConnectionView.noConnectionViewLayout.visibility = View.VISIBLE
+        }
+    }
+
     private fun selectBeer(beer: Beer, position:Int){
         Log.d(TAG, "beer: ${beer.name}, position: $position")
     }
 
     private fun noResultView(size:Int){
         when(size){
-            0 -> binding.mainNoResultView.noResultViewLayout.visibility = View.VISIBLE
+            0 -> {
+                println("kkk: ${mainViewModel.hasConnection.value}")
+                if (mainViewModel.hasConnection.value == true) binding.mainNoResultView.noResultViewLayout.visibility = View.VISIBLE
+            }
             else -> binding.mainNoResultView.noResultViewLayout.visibility = View.GONE
         }
     }
 
+    private fun retryBtnSetup(){
+        binding.mainNoConnectionView.noConnectionBtn.setOnClickListener {
+            mainViewModel.fetchData()
+        }
+    }
 }

@@ -6,7 +6,6 @@
     android:layout_height="match_parent"
     android:id="@+id/no_result_view_layout">
 
-
     <ImageView
         android:id="@+id/no_result_iv"
         android:layout_width="120dp"

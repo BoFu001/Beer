@@ -12,7 +12,7 @@ import com.bofu.coroutinesretrofitmvvm.models.Beer
 class MainAdapter(
     private val item: ArrayList<Beer>,
     private val onClickListener: (Beer, Int) -> Unit
-): RecyclerView.Adapter<MainAdapter.MainAdapter>(){
+): RecyclerView.Adapter<MainAdapter.MainHolder>(){
 
     fun update(newData: ArrayList<Beer>) {
         item.clear()
@@ -20,14 +20,14 @@ class MainAdapter(
         notifyDataSetChanged()
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MainAdapter {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MainHolder {
         val binding = RowBeerBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return MainAdapter(binding)
+        return MainHolder(binding)
     }
 
     override fun getItemCount() = item.size
 
-    override fun onBindViewHolder(holder: MainAdapter, position: Int) {
+    override fun onBindViewHolder(holder: MainHolder, position: Int) {
         holder.beerName.text = item[position].name
         holder.beerTagline.text = item[position].tagline
         holder.beerYear.text = item[position].year.toString()
@@ -38,7 +38,7 @@ class MainAdapter(
         }
     }
 
-    class MainAdapter(binding: RowBeerBinding) : RecyclerView.ViewHolder(binding.root) {
+    class MainHolder(binding: RowBeerBinding) : RecyclerView.ViewHolder(binding.root) {
         var beerName: TextView = binding.mainBeerName
         var beerTagline: TextView = binding.mainBeerTagline
         var beerYear: TextView = binding.mainBeerYear

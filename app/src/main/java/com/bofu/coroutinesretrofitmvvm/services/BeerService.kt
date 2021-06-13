@@ -2,6 +2,7 @@ package com.bofu.coroutinesretrofitmvvm.services
 
 import com.bofu.coroutinesretrofitmvvm.models.Beer
 import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
@@ -22,18 +23,15 @@ class BeerService {
         retrofit.create(BeerApi::class.java)
     }
 
-
-
     suspend fun getBeers(): Flow<Beer> {
         return flow {
             val countries = beerApi.getBeers()
             countries.forEach {
+                //delay(500L)
                 emit(it)
             }
         }
     }
-
-
 
     companion object {
         private const val BaseUrl = "https://api.punkapi.com/v2/"

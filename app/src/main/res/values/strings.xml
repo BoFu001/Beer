@@ -5,7 +5,7 @@
 
     <!-- FilterActivity -->
     <string name="filter_page_name">Filter</string>
-    <string name="filter_page_text">From %s to %s</string>
+    <string name="filter_page_text">Beer brewed from %s to %s</string>
     <string name="filter_btn">Filter</string>
     <string name="clean_btn">Clean</string>
 

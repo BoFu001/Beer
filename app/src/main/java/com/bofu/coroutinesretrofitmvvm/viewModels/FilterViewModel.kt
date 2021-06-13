@@ -6,7 +6,6 @@ import androidx.lifecycle.*
 import com.bofu.coroutinesretrofitmvvm.R
 import com.bofu.coroutinesretrofitmvvm.models.YearFilter
 
-
 class FilterViewModel(application: Application) : AndroidViewModel (application) {
 
     private val TAG = javaClass.simpleName
