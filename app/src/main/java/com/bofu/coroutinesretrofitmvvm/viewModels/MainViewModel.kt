@@ -39,7 +39,7 @@ class MainViewModel(application: Application) : AndroidViewModel (application) {
 
         Log.d(TAG, ": beginning fetchData")
 
-        viewModelScope.launch(Dispatchers.Main) {
+        viewModelScope.launch {
             beerService.getBeers()
                 .onStart {
                     isLoading.value = true
