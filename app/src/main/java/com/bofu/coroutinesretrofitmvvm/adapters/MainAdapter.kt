@@ -1,10 +1,13 @@
 package com.bofu.coroutinesretrofitmvvm.adapters
 
+import android.animation.AnimatorInflater
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.bofu.coroutinesretrofitmvvm.R
 import com.bofu.coroutinesretrofitmvvm.databinding.RowBeerBinding
 import com.bofu.coroutinesretrofitmvvm.extensions.loadImage
 import com.bofu.coroutinesretrofitmvvm.models.Beer
@@ -13,6 +16,8 @@ class MainAdapter(
     private val item: ArrayList<Beer>,
     private val onClickListener: (Beer, Int) -> Unit
 ): RecyclerView.Adapter<MainAdapter.MainHolder>(){
+
+    private var previousPosition = -1
 
     fun update(newData: ArrayList<Beer>) {
         item.clear()
@@ -36,13 +41,56 @@ class MainAdapter(
         holder.itemView.setOnClickListener {
             onClickListener(item[position], position)
         }
+
+        // call Animation function
+        setAnimation(holder.itemView, position)
+
+        println("zzz: " + position + ", " +  ", " + item[position].name)
     }
 
     class MainHolder(binding: RowBeerBinding) : RecyclerView.ViewHolder(binding.root) {
-        var beerName: TextView = binding.mainBeerName
-        var beerTagline: TextView = binding.mainBeerTagline
-        var beerYear: TextView = binding.mainBeerYear
-        var beerImg: ImageView = binding.mainBeerImg
+        val beerName: TextView = binding.mainBeerName
+        val beerTagline: TextView = binding.mainBeerTagline
+        val beerYear: TextView = binding.mainBeerYear
+        val beerImg: ImageView = binding.mainBeerImg
+    }
+
+    private fun setAnimation(viewToAnimate: View, position: Int) {
+
+        // scroll to bottom
+        if (position > previousPosition) {
+
+            // animation on bottom
+//            val animation = AnimationUtils.loadAnimation(viewToAnimate.context, R.anim.slide_up)
+//            viewToAnimate.startAnimation(animation)
+
+
+            AnimatorInflater.loadAnimator(viewToAnimate.context, R.animator.fadein_up).apply {
+                setTarget(viewToAnimate)
+                start()
+            }
+
+
+        }
+
+        // scroll to top
+        else {
+
+            // animation on top
+//            val animation = AnimationUtils.loadAnimation(viewToAnimate.context, R.anim.slide_down)
+//            viewToAnimate.startAnimation(animation)
+
+            AnimatorInflater.loadAnimator(viewToAnimate.context, R.animator.fadein_down).apply {
+                setTarget(viewToAnimate)
+                start()
+            }
+
+
+
+        }
+
+
+        previousPosition = position
     }
 
 }
