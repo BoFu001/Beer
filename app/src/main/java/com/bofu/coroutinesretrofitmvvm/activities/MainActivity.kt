@@ -15,6 +15,7 @@ import com.bofu.coroutinesretrofitmvvm.R
 import com.bofu.coroutinesretrofitmvvm.adapters.MainAdapter
 import com.bofu.coroutinesretrofitmvvm.databinding.ActivityMainBinding
 import com.bofu.coroutinesretrofitmvvm.models.Beer
+import com.bofu.coroutinesretrofitmvvm.models.ViewState
 import com.bofu.coroutinesretrofitmvvm.models.YearFilter
 import com.bofu.coroutinesretrofitmvvm.viewModels.MainViewModel
 import com.google.gson.Gson
@@ -29,12 +30,9 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private val binding: ActivityMainBinding by lazy {
-        ActivityMainBinding.inflate(layoutInflater)
-    }
-
     private val TAG = javaClass.simpleName
     private val mainViewModel: MainViewModel by viewModels()
+    private val binding: ActivityMainBinding by lazy { ActivityMainBinding.inflate(layoutInflater) }
     private val mainAdapter = MainAdapter(ArrayList(), this::selectBeer)
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -75,18 +73,32 @@ class MainActivity : AppCompatActivity() {
     private fun mainViewModelSetup(){
         println("zzz 1")
 
-        mainViewModel.hasConnection.observe(this) {
-            showNoConnectionView(it)
-        }
         mainViewModel.liveData.observe(this) {
             println("zzz 2:" + it.size)
             mainAdapter.update(it)
-            noResultView(it.size)
         }
-        mainViewModel.isLoading.observe(this) {
-            showProgressBar(it)
-            println("kkk " + it)
+
+//        mainViewModel.hasConnection.observe(this) {
+//            showNoConnectionView(it)
+//        }
+//
+//        mainViewModel.isLoading.observe(this) {
+//            showProgressBar(it)
+//            println("kkk " + it)
+//        }
+
+        mainViewModel.viewState.observe(this){
+//            showNoConnectionView(it.hasConnection)
+//            showProgressBar(it.isLoading)
+//            showNoResultView(it.emptyResult)
+            render(it)
         }
+    }
+
+    private fun render(viewState: ViewState) {
+        showNoConnectionView(viewState.hasConnection)
+        showProgressBar(viewState.isLoading)
+        showNoResultView(viewState.emptyResult)
     }
 
     private fun showProgressBar(bool:Boolean){
@@ -103,19 +115,17 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun showNoResultView(bool:Boolean){
+        when(bool){
+            true -> if (mainViewModel.viewState.value!!.hasConnection) binding.mainNoResultView.noResultViewLayout.visibility = View.VISIBLE
+            false -> binding.mainNoResultView.noResultViewLayout.visibility = View.GONE
+        }
+    }
+
     private fun selectBeer(beer: Beer, position:Int){
         Log.d(TAG, "beer: ${beer.name}, position: $position")
     }
 
-    private fun noResultView(size:Int){
-        when(size){
-            0 -> {
-                println("kkk: ${mainViewModel.hasConnection.value}")
-                if (mainViewModel.hasConnection.value == true) binding.mainNoResultView.noResultViewLayout.visibility = View.VISIBLE
-            }
-            else -> binding.mainNoResultView.noResultViewLayout.visibility = View.GONE
-        }
-    }
 
     private fun retryBtnSetup(){
         binding.mainNoConnectionView.noConnectionBtn.setOnClickListener {

@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.lifecycle.*
 import com.bofu.coroutinesretrofitmvvm.extensions.isConnectedToNetwork
 import com.bofu.coroutinesretrofitmvvm.models.Beer
+import com.bofu.coroutinesretrofitmvvm.models.ViewState
 import com.bofu.coroutinesretrofitmvvm.models.YearFilter
 import com.bofu.coroutinesretrofitmvvm.services.BeerService
 import kotlinx.coroutines.*
@@ -15,10 +16,18 @@ class MainViewModel(application: Application) : AndroidViewModel (application) {
     private val TAG = javaClass.simpleName
     private val beerService = BeerService()
     private val data = ArrayList<Beer>()
-    val isLoading = MutableLiveData(false)
-    val liveData = MutableLiveData<ArrayList<Beer>>()
     var yearFilter: YearFilter? = null
-    val hasConnection = MutableLiveData(false)
+
+    // val hasConnection = MutableLiveData(false)
+    // val isLoading = MutableLiveData(false)
+
+    // For internal usage
+    private val _liveData = MutableLiveData<ArrayList<Beer>>()
+    // Only publicly expose LiveData, never mutable
+    val liveData: LiveData<ArrayList<Beer>> = _liveData
+
+    private val _viewState = MutableLiveData(ViewState(isLoading = false, hasConnection = false, emptyResult = false))
+    val viewState: LiveData<ViewState> = _viewState
 
     init {
         fetchData()
@@ -26,10 +35,12 @@ class MainViewModel(application: Application) : AndroidViewModel (application) {
 
     private fun checkConnection(): Boolean {
         val isConnected = getApplication<Application>().applicationContext.isConnectedToNetwork()
-        when(isConnected){
-            true -> hasConnection.value = true
-            false -> hasConnection.value = false
-        }
+//        when(isConnected){
+//            true -> hasConnection.value = true
+//            false -> hasConnection.value = false
+//        }
+
+        _viewState.value = _viewState.value!!.copy(hasConnection = isConnected)
         return isConnected
     }
 
@@ -42,14 +53,17 @@ class MainViewModel(application: Application) : AndroidViewModel (application) {
         viewModelScope.launch {
             beerService.getBeers()
                 .onStart {
-                    isLoading.value = true
+                    //isLoading.value = true
+                    _viewState.value = _viewState.value!!.copy(isLoading = true)
                 }
                 .catch { exception ->
                     Log.d(TAG, ": Exception: ${exception.localizedMessage}")
-                    hasConnection.value = false
+                    //hasConnection.value = false
+                    _viewState.value = _viewState.value!!.copy(hasConnection = false)
                 }
                 .onCompletion {
-                    isLoading.value = false
+                    //isLoading.value = false
+                    _viewState.value = _viewState.value!!.copy(isLoading = false)
                     filterData()
                 }.collect {
                     data.add(it)
@@ -66,12 +80,13 @@ class MainViewModel(application: Application) : AndroidViewModel (application) {
 
     private fun filterData(){
         if(yearFilter == null){
-            liveData.value = data
+            _liveData.value = data
         } else {
-            liveData.value = data.filter { beer ->
+            _liveData.value = data.filter { beer ->
                 beer.year >= yearFilter!!.start && beer.year <= yearFilter!!.end
             } as ArrayList<Beer>
         }
+        _viewState.value = _viewState.value!!.copy(emptyResult = _liveData.value!!.size == 0)
     }
 
 

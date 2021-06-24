@@ -38,7 +38,6 @@ class FilterActivity : AppCompatActivity() {
     }
 
     private fun UISetup(){
-
         binding.filterButton.setOnClickListener {
             reloadDataInMainActivity()
         }
@@ -54,7 +53,6 @@ class FilterActivity : AppCompatActivity() {
         }
     }
 
-
     private fun filterViewModelSetup(){
         filterViewModel.yearFilter.observe(this) {
             updateText()
@@ -68,12 +66,10 @@ class FilterActivity : AppCompatActivity() {
     }
 
     private fun reloadDataInMainActivity(){
-
         val jsonYearFilter = Gson().toJson(filterViewModel.getYearFilter())
         val intent = Intent()
         intent.putExtra("jsonFilterData", jsonYearFilter)
         setResult(Activity.RESULT_OK, intent)
         finish()
     }
-
 }
