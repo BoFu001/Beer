@@ -15,16 +15,13 @@ class MainViewModel(application: Application) : AndroidViewModel (application) {
 
     private val TAG = javaClass.simpleName
     private val beerService = BeerService()
-    private val data = ArrayList<Beer>()
+    private val data = mutableListOf<Beer>()
     var yearFilter: YearFilter? = null
 
-    // val hasConnection = MutableLiveData(false)
-    // val isLoading = MutableLiveData(false)
-
     // For internal usage
-    private val _liveData = MutableLiveData<ArrayList<Beer>>()
+    private val _liveData = MutableLiveData<MutableList<Beer>>()
     // Only publicly expose LiveData, never mutable
-    val liveData: LiveData<ArrayList<Beer>> = _liveData
+    val liveData: LiveData<MutableList<Beer>> = _liveData
 
     private val _viewState = MutableLiveData(ViewState(isLoading = false, hasConnection = false, emptyResult = false))
     val viewState: LiveData<ViewState> = _viewState
@@ -35,11 +32,6 @@ class MainViewModel(application: Application) : AndroidViewModel (application) {
 
     private fun checkConnection(): Boolean {
         val isConnected = getApplication<Application>().applicationContext.isConnectedToNetwork()
-//        when(isConnected){
-//            true -> hasConnection.value = true
-//            false -> hasConnection.value = false
-//        }
-
         _viewState.value = _viewState.value!!.copy(hasConnection = isConnected)
         return isConnected
     }
@@ -84,7 +76,7 @@ class MainViewModel(application: Application) : AndroidViewModel (application) {
         } else {
             _liveData.value = data.filter { beer ->
                 beer.year >= yearFilter!!.start && beer.year <= yearFilter!!.end
-            } as ArrayList<Beer>
+            } as MutableList<Beer>
         }
         _viewState.value = _viewState.value!!.copy(emptyResult = _liveData.value!!.size == 0)
     }

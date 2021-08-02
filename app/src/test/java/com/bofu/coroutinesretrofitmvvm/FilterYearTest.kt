@@ -14,7 +14,7 @@ import org.junit.Test
 class FilterYearTest {
 
     private lateinit var beerService: BeerService
-    private val beerArray = ArrayList<Beer>()
+    private val beerArray = mutableListOf<Beer>()
 
     @Before
     fun init(){

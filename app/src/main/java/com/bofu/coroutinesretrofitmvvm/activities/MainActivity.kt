@@ -33,7 +33,7 @@ class MainActivity : AppCompatActivity() {
     private val TAG = javaClass.simpleName
     private val mainViewModel: MainViewModel by viewModels()
     private val binding: ActivityMainBinding by lazy { ActivityMainBinding.inflate(layoutInflater) }
-    private val mainAdapter = MainAdapter(ArrayList(), this::selectBeer)
+    private val mainAdapter = MainAdapter(mutableListOf(), this::selectBeer)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -71,26 +71,12 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun mainViewModelSetup(){
-        println("zzz 1")
 
         mainViewModel.liveData.observe(this) {
-            println("zzz 2:" + it.size)
             mainAdapter.update(it)
         }
 
-//        mainViewModel.hasConnection.observe(this) {
-//            showNoConnectionView(it)
-//        }
-//
-//        mainViewModel.isLoading.observe(this) {
-//            showProgressBar(it)
-//            println("kkk " + it)
-//        }
-
         mainViewModel.viewState.observe(this){
-//            showNoConnectionView(it.hasConnection)
-//            showProgressBar(it.isLoading)
-//            showNoResultView(it.emptyResult)
             render(it)
         }
     }

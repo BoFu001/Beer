@@ -13,7 +13,7 @@ import retrofit2.http.GET
 
 interface BeerApi {
     @GET("beers")
-    suspend fun getBeers() : ArrayList<Beer>
+    suspend fun getBeers() : MutableList<Beer>
 }
 
 class BeerService {

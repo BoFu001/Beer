@@ -13,13 +13,13 @@ import com.bofu.coroutinesretrofitmvvm.extensions.loadImage
 import com.bofu.coroutinesretrofitmvvm.models.Beer
 
 class MainAdapter(
-    private val item: ArrayList<Beer>,
+    private val item: MutableList<Beer>,
     private val onClickListener: (Beer, Int) -> Unit
 ): RecyclerView.Adapter<MainAdapter.MainHolder>(){
 
     private var previousPosition = -1
 
-    fun update(newData: ArrayList<Beer>) {
+    fun update(newData: MutableList<Beer>) {
         item.clear()
         item.addAll(newData)
         notifyDataSetChanged()
